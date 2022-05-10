@@ -1,0 +1,75 @@
+import numpy as np
+import pandas as pd
+import time
+import csv
+import random
+import copy
+import matplotlib.pyplot as plt  
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import ElasticNet
+from sklearn.svm import SVR
+from sklearn import svm#svm导入
+from sklearn.svm import SVC
+from sklearn.metrics import confusion_matrix, classification_report
+from sklearn.metrics import r2_score as r2, mean_squared_error as mse, mean_absolute_error as mae
+from sklearn.metrics import accuracy_score
+from sklearn.metrics import confusion_matrix
+from sklearn.metrics import classification_report
+from sklearn.metrics import explained_variance_score
+from sklearn import metrics
+
+data=pd.read_csv('C://Users//lenovo//Desktop//corn_data.csv')
+
+X = data.iloc[:,data.columns != 'target'] #  data features
+y = data.iloc[:,data.columns == 'target'] # target
+# 1. 训练集与测试集8：2切分     #2.也可按照9:1切分 random_state设为10,之前是20，分类预测结果略有不同
+X_train, X_test, y_train, y_test = train_test_split(X.values,y.values, test_size = 0.2, random_state=10)
+
+# 2. 标准化数据
+scalerX = StandardScaler() # 
+scalerX.fit(X_train)       # 使用training data的标准差进行标准化
+
+X_train = scalerX.transform(X_train) # 对训练集特征进行标准化
+X_test = scalerX.transform(X_test)   # 对测试机特征进行标准化
+
+clf = svm.SVC(kernel='linear', gamma=0.6, decision_function_shape='ovo', C=5)
+#训练
+clf.fit(X_train, y_train)
+#打印训练的准确率
+print(clf.score(X_train, y_train))
+
+#打印测试的准确率
+print(clf.score(X_test, y_test))
+
+#将原始结果和预测结果放在一起对比，更加直观反映
+y_train_predict=clf.predict(X_train) #y预测结果
+y_train_1abel=y_train.reshape((-1)) #数据集中y的原本结果
+# if y_train_predict.any()==y_train_1abel.any():
+#     print("分类正确!")
+# else:
+#     print("分类有误。")
+# print(type(y_train_predict))
+comp=zip(y_train_predict,y_train_predict) #二者放一起
+
+for i in range(5):
+    img1 = cv2.imread('D://python practice//wjy_corndata//wjy//broken_kernel_crop//'+str(i)+'.jpg')
+    img2 = cv2.imread('D://python practice//wjy_corndata//wjy//moldy_kernel_crop//'+str(i)+'.jpg')
+    img3 = cv2.imread('D://python practice//wjy_corndata//wjy//good_kernel_crop//'+str(i)+'.jpg')
+
+
+    if y_train_predict[i]==1:
+        cv2.imshow('target'+str(i),img1)
+        print(str(i)+'此样本是破碎粒！')
+        cv2.waitKey(0)
+        cv2.destroyAllWindows() 
+    elif y_train_predict[i]==2:
+        cv2.imshow('target'+str(i),img2)
+        print(str(i)+'此样本是霉变粒！')
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
+    else:
+        cv2.imshow('target'+str(i),img3)
+        print(str(i)+'此样本是正常粒！')
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
