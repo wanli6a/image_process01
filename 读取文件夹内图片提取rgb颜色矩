@@ -1,0 +1,115 @@
+#!/usr/bin/env python
+#-*- coding:utf-8 -*-
+#数据预处理
+
+from PIL import Image
+import matplotlib.pyplot as plt
+import os
+import numpy as np
+import pandas as pd
+
+inputfile1='D://python practice//wjy_corndata//wjy//good_kernel_crop'
+inputfile2='D://python practice//wjy_corndata//wjy//moldy_kernel_crop'
+inputfile3='D://python practice//wjy_corndata//wjy//broken_kernel_crop'
+
+#注意此处:得到一个包含图片名(如：'1_10.jpg')的列表
+imgslist1=os.listdir(inputfile1)
+imgslist2=os.listdir(inputfile2)
+imgslist3=os.listdir(inputfile3)
+
+for i in range(len(imgslist1)):  #待处理图片
+    #label,number=imgslist[i].rstrip('.jpg').split('_')  #label,number分别表示类别和序号
+    la=imgslist1[i].rstrip('.jpg').split('_')
+    #将列表中数字字符串转换为数值
+    la_numbers=[int(x) for x in la]
+
+#     '''1.图片切割'''
+    img=Image.open(inputfile+'//'+imgslist1[i])
+#     M,N=img.size
+#     box=[N/2-50,M/2-50,N/2+50,M/2+50]
+#     roi=img.crop(box)
+#     '''切割完成(100×100)'''
+
+    '''2.特征提取'''
+    #R,G,B=roi.split()  #分离三个颜色通道
+    img=np.array(img)/[256.0,256.0,256.0]
+    E=1.0/10000*(img.sum(axis=0).sum(axis=0))  #一阶颜色矩;有100×100个像素
+    err=img-E
+    delta=np.sqrt(1.0/10000*(err**2).sum(axis=0).sum(axis=0))  #二阶颜色矩
+    #s=pow(1.0/N*(pow(roi3-E,3).sum(axis=0).sum(axis=0)),1.0/3)
+    a=1.0/10000*(pow(err,3).sum(axis=0).sum(axis=0))
+    s=abs(a)**(1.0/3)*-1  #三阶颜色矩;注意：负数开立方方法
+    '''
+    r_E,g_E,b_E=E
+    r_del,g_del,b_del=delta
+    r_s,g_s,b_s=s
+    '''
+    re=np.concatenate((la_numbers,E,delta,s))  #数组水平拼接，concatenate((a,b),axis=0)
+#     result1.append(re)
+    print(re)
+    '''特征提取完毕'''
+for i in range(len(imgslist2)):  #待处理图片
+    #label,number=imgslist[i].rstrip('.jpg').split('_')  #label,number分别表示类别和序号
+    la=imgslist2[i].rstrip('.jpg').split('_')
+    #将列表中数字字符串转换为数值
+    la_numbers=[int(x) for x in la]
+
+#     '''1.图片切割'''
+    img=Image.open(inputfile+'//'+imgslist2[i])
+#     M,N=img.size
+#     box=[N/2-50,M/2-50,N/2+50,M/2+50]
+#     roi=img.crop(box)
+#     '''切割完成(100×100)'''
+
+    '''2.特征提取'''
+    #R,G,B=roi.split()  #分离三个颜色通道
+    img=np.array(img)/[256.0,256.0,256.0]
+    E=1.0/10000*(img.sum(axis=0).sum(axis=0))  #一阶颜色矩;有100×100个像素
+    err=img-E
+    delta=np.sqrt(1.0/10000*(err**2).sum(axis=0).sum(axis=0))  #二阶颜色矩
+    #s=pow(1.0/N*(pow(roi3-E,3).sum(axis=0).sum(axis=0)),1.0/3)
+    a=1.0/10000*(pow(err,3).sum(axis=0).sum(axis=0))
+    s=abs(a)**(1.0/3)*-1  #三阶颜色矩;注意：负数开立方方法
+    '''
+    r_E,g_E,b_E=E
+    r_del,g_del,b_del=delta
+    r_s,g_s,b_s=s
+    '''
+    re=np.concatenate((la_numbers,E,delta,s))  #数组水平拼接，concatenate((a,b),axis=0)
+#     result1.append(re)
+    print(re)
+    '''特征提取完毕'''
+for i in range(len(imgslist3)):  #待处理图片
+    #label,number=imgslist[i].rstrip('.jpg').split('_')  #label,number分别表示类别和序号
+    la=imgslist3[i].rstrip('.jpg').split('_')
+    #将列表中数字字符串转换为数值
+    la_numbers=[int(x) for x in la]
+
+#     '''1.图片切割'''
+    img=Image.open(inputfile+'//'+imgslist3[i])
+#     M,N=img.size
+#     box=[N/2-50,M/2-50,N/2+50,M/2+50]
+#     roi=img.crop(box)
+#     '''切割完成(100×100)'''
+
+    '''2.特征提取'''
+    #R,G,B=roi.split()  #分离三个颜色通道
+    img=np.array(img)/[256.0,256.0,256.0]
+    E=1.0/10000*(img.sum(axis=0).sum(axis=0))  #一阶颜色矩;有100×100个像素
+    err=img-E
+    delta=np.sqrt(1.0/10000*(err**2).sum(axis=0).sum(axis=0))  #二阶颜色矩
+    #s=pow(1.0/N*(pow(roi3-E,3).sum(axis=0).sum(axis=0)),1.0/3)
+    a=1.0/10000*(pow(err,3).sum(axis=0).sum(axis=0))
+    s=abs(a)**(1.0/3)*-1  #三阶颜色矩;注意：负数开立方方法
+    '''
+    r_E,g_E,b_E=E
+    r_del,g_del,b_del=delta
+    r_s,g_s,b_s=s
+    '''
+    re=np.concatenate((la_numbers,E,delta,s))  #数组水平拼接，concatenate((a,b),axis=0)
+#     result1.append(re)
+    print(re)
+    '''特征提取完毕'''
+# cols=[]
+# # res=pd.DataFrame(result,columns=cols)
+# print(result)
